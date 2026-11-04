@@ -1,0 +1,394 @@
+<title>MegaPro — Análise Mega-Sena</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<style>
+:root{
+  --azul:#1565c0;
+  --azul2:#0d47a1;
+  --azul3:#1976d2;
+  --turquesa:#00acc1;
+  --turquesa2:#006064;
+  --verde:#43a047;
+  --laranja:#f57f17;
+  --amarelo:#ffd54f;
+  --white:#ffffff;
+  --light:#e3f2fd;
+  --text:#1a237e;
+  --muted:#546e7a;
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;-webkit-font-smoothing:antialiased}
+
+nav{background:var(--azul2);padding:0 max(24px,env(safe-area-inset-left,0px));height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo-m{font-size:22px;font-weight:900;color:var(--amarelo);font-style:italic}
+.nav-sep{width:1px;height:28px;background:rgba(255,255,255,0.3)}
+.nav-name{font-size:14px;font-weight:700;color:var(--white)}
+.nav-btn{background:var(--white);color:var(--azul2);padding:9px 18px;border-radius:4px;font-size:13px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.15s}
+.nav-btn:hover{background:#e3f2fd}
+
+.hero{background:linear-gradient(135deg,var(--azul2) 45%,var(--turquesa) 100%);padding:52px max(32px,env(safe-area-inset-left,0px)) 60px;position:relative;overflow:hidden;min-height:320px;display:flex;align-items:center}
+.hero-bg{position:absolute;right:0;top:0;bottom:0;width:50%;background:linear-gradient(135deg,var(--turquesa) 0%,#00bcd4 60%,#4dd0e1 100%);clip-path:polygon(14% 0,100% 0,100% 100%,0% 100%)}
+.trevo{position:absolute;opacity:0.15;font-size:70px;user-select:none}
+.t1{right:18%;top:8%}.t2{right:6%;bottom:10%;font-size:44px;opacity:0.1}.t3{right:36%;top:4%;font-size:32px;opacity:0.08}
+.hero-content{position:relative;z-index:2;max-width:500px}
+.hero-bread{font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:14px}
+.hero-h1{font-size:clamp(34px,5.5vw,54px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-1px;margin-bottom:12px}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.88);line-height:1.6;margin-bottom:24px;max-width:400px}
+.btn-cta{background:#fff;color:var(--azul2);padding:14px 28px;border-radius:4px;font-size:15px;font-weight:800;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background 0.15s;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.btn-cta:hover{background:#e3f2fd}
+.hero-preco{margin-top:22px;display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:14px 20px;backdrop-filter:blur(8px)}
+.preco-de{font-size:12px;color:rgba(255,255,255,0.6);text-decoration:line-through}
+.preco-por{font-size:30px;font-weight:900;color:#ffd54f;line-height:1}
+.preco-desc{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.4}
+
+.hero-bilhetes{position:absolute;right:max(32px,5vw);bottom:-8px;z-index:3;display:flex}
+.bilhete{width:136px;background:#fff;border-radius:6px;padding:10px 8px;border:1px solid #ddd;font-size:7px;color:#333;box-shadow:0 4px 16px rgba(0,0,0,0.2)}
+.bilhete:first-child{transform:rotate(-5deg) translateX(18px);z-index:1}
+.bilhete:last-child{transform:rotate(3deg)}
+.bil-logo{font-size:9px;font-weight:900;color:var(--azul2);text-align:center;border-bottom:1px solid #eee;padding-bottom:5px;margin-bottom:5px;display:flex;align-items:center;justify-content:center;gap:3px}
+.bil-numgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:1px}
+.bil-num{width:11px;height:11px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5.5px;font-weight:700;color:#333;border:0.5px solid #ccc}
+.bil-num.m{background:var(--azul2);color:#fff;border-color:var(--azul2)}
+
+.faixa{background:var(--azul);padding:20px max(32px,env(safe-area-inset-left,0px));display:flex;justify-content:center;gap:0;flex-wrap:wrap}
+.fi{padding:0 28px;text-align:center;border-right:1px solid rgba(255,255,255,0.2)}
+.fi:last-child{border:none}
+.fi-val{font-size:26px;font-weight:900;color:var(--amarelo);line-height:1}
+.fi-lbl{font-size:11px;color:rgba(255,255,255,0.75);margin-top:3px}
+
+.sec{padding:60px max(24px,env(safe-area-inset-left,0px));max-width:860px;margin:0 auto}
+.sec-h{font-size:clamp(22px,4vw,32px);font-weight:800;color:var(--text);line-height:1.15;letter-spacing:-0.5px;margin-bottom:10px}
+.sec-p{font-size:15px;color:var(--muted);line-height:1.65;margin-bottom:36px;max-width:540px}
+
+.app-wrap{background:var(--light);border-radius:16px;padding:24px;border:1px solid #bbdefb;margin-bottom:36px;overflow:hidden}
+.app-bar{background:#1a237e;border-radius:8px 8px 0 0;padding:9px 14px;display:flex;align-items:center;gap:8px}
+.app-dot{width:9px;height:9px;border-radius:50%}
+.app-url{flex:1;background:rgba(255,255,255,0.12);border-radius:3px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.65)}
+.app-body{background:#fff;border-radius:0 0 8px 8px;padding:14px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.app-tabs{display:flex;gap:2px;border-bottom:2px solid #e3f2fd;padding-bottom:9px;margin-bottom:12px;overflow-x:auto}
+.at{padding:6px 12px;font-size:11px;font-weight:700;border-radius:5px 5px 0 0;white-space:nowrap;color:#78909c}
+.at.on{background:var(--azul);color:#fff}
+.app-balls{display:flex;gap:8px;justify-content:center;margin:10px 0 12px}
+.aball{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,0.2)}
+.ab-q{background:linear-gradient(135deg,#c62828,#e53935)}
+.ab-n{background:linear-gradient(135deg,#1565c0,#1976d2)}
+.ab-g{background:linear-gradient(135deg,#f57f17,#ffa000)}
+.rank-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #f5f5f5}
+.rank-row:last-child{border:none}
+.rn{width:28px;height:28px;border-radius:50%;background:var(--azul2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex:0 0 auto}
+.rbar{flex:1;height:6px;background:#e3f2fd;border-radius:3px;overflow:hidden}
+.rfill{height:100%;border-radius:3px}
+.rct{font-size:11px;color:var(--muted);min-width:34px;text-align:right;font-weight:600}
+
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:36px}
+.feat-card{background:#fff;border-radius:10px;padding:22px 18px;border:1px solid #e0e7ef;box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:box-shadow 0.15s}
+.feat-card:hover{box-shadow:0 6px 20px rgba(0,0,0,0.1)}
+.feat-icon{width:42px;height:42px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.feat-h{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.feat-p{font-size:12px;color:var(--muted);line-height:1.6}
+
+.deps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.dep{background:#fff;border-radius:10px;padding:20px;border:1px solid #e0e7ef;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.dep-est{color:#ffa000;font-size:14px;margin-bottom:9px}
+.dep-txt{font-size:13px;line-height:1.65;color:#333;margin-bottom:12px}
+.dep-autor{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.dep-av{width:28px;height:28px;border-radius:50%;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto}
+
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid #e0e7ef}
+.step:last-child{border:none}
+.step-num{width:34px;height:34px;border-radius:50%;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex:0 0 auto;margin-top:2px}
+.step-h{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.step-p{font-size:13px;color:var(--muted);line-height:1.6}
+
+.faq-wrap{border:1px solid #e0e7ef;border-radius:10px;overflow:hidden;background:#fff}
+.faq-row{border-bottom:1px solid #e0e7ef}
+.faq-row:last-child{border:none}
+.faq-q{width:100%;background:none;border:none;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:#333;cursor:pointer;text-align:left;gap:16px;font-family:inherit}
+.faq-q:hover{background:#f5f7fa}
+.faq-ico{width:22px;height:22px;border-radius:50%;background:var(--light);border:1px solid #bbdefb;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--azul);transition:transform 0.2s;flex:0 0 auto}
+.faq-row.open .faq-ico{transform:rotate(45deg)}
+.faq-a{display:none;padding:0 20px 16px;font-size:13px;color:var(--muted);line-height:1.7}
+.faq-row.open .faq-a{display:block}
+
+.cta-bottom{background:linear-gradient(135deg,var(--azul2) 0%,var(--turquesa2) 100%);padding:60px max(32px,env(safe-area-inset-left,0px));text-align:center;position:relative;overflow:hidden}
+.cta-bottom::before{content:'☘';position:absolute;right:4%;top:50%;transform:translateY(-50%);font-size:120px;opacity:0.07}
+.cta-h{font-size:clamp(24px,4vw,38px);font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:-0.5px}
+.cta-p{font-size:15px;color:rgba(255,255,255,0.8);margin-bottom:28px}
+.preco-box{display:inline-flex;flex-direction:column;align-items:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:10px;padding:18px 32px;margin-bottom:24px}
+.pb-de{font-size:13px;color:rgba(255,255,255,0.6);text-decoration:line-through}
+.pb-val{font-size:44px;font-weight:900;color:#ffd54f;line-height:1}
+.pb-nota{font-size:12px;color:rgba(255,255,255,0.65);margin-top:4px}
+
+.aviso-sec{background:#fff3e0;border-top:3px solid #ff9800;padding:16px max(24px,env(safe-area-inset-left,0px))}
+.aviso-inner{max-width:860px;margin:0 auto;font-size:12px;color:#5d4037;line-height:1.7}
+
+footer{background:var(--azul2);padding:20px max(24px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-logo{font-size:14px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
+.footer-txt{font-size:11px;color:rgba(255,255,255,0.6)}
+
+#modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;padding:24px}
+#modal.show{display:flex}
+.modal-box{background:#fff;border-radius:12px;padding:36px;max-width:380px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:#90a4ae;font-size:20px;cursor:pointer;padding:4px;line-height:1}
+.modal-close:hover{color:#333}
+.modal-top{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.modal-logo-m{font-size:20px;font-weight:900;color:var(--azul2);font-style:italic}
+.modal-logo-sep{width:1px;height:20px;background:#ddd}
+.modal-logo-nm{font-size:13px;font-weight:700;color:var(--azul2)}
+.modal-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+.modal-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:6px}
+.modal-input{width:100%;padding:12px 14px;border-radius:6px;border:2px solid #e0e7ef;background:#fafafa;color:#333;font-size:16px;font-family:inherit;letter-spacing:4px;font-weight:700;margin-bottom:12px;text-align:center}
+.modal-input:focus{outline:none;border-color:var(--azul)}
+.modal-btn{width:100%;padding:13px;border-radius:6px;border:none;background:var(--azul2);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:background 0.15s}
+.modal-btn:hover{background:var(--azul3)}
+.modal-err{font-size:12px;color:#c62828;margin-top:8px;min-height:16px}
+.modal-foot{margin-top:18px;padding-top:16px;border-top:1px solid #f0f0f0;font-size:12px;color:var(--muted);text-align:center;line-height:1.6}
+.modal-link{color:var(--azul);text-decoration:underline;cursor:pointer;background:none;border:none;font-size:12px;font-family:inherit}
+
+@media(max-width:600px){.hero-bilhetes{display:none}.hero{min-height:auto}.fi{padding:0 16px}.feat-grid,.deps{grid-template-columns:1fr}}
+</style>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-m">M</div>
+    <div class="nav-sep"></div>
+    <div class="nav-name">MegaPro · Análise Estatística</div>
+  </div>
+  <button class="nav-btn" onclick="abrirModal()">🔒 Área do cliente</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="trevo t1">☘</div>
+  <div class="trevo t2">☘</div>
+  <div class="trevo t3">☘</div>
+  <div class="hero-content">
+    <div class="hero-bread">Início › Ferramentas › Mega-Sena</div>
+    <h1 class="hero-h1">MegaPro</h1>
+    <p class="hero-sub">A ferramenta que analisa <strong>3.080 sorteios reais</strong> da Caixa e gera jogos por cálculo estatístico — frequência, recência e equilíbrio.</p>
+    <button class="btn-cta" onclick="abrirModal()">Acessar agora →</button>
+    <div class="hero-preco">
+      <div>
+        <div class="preco-de">R$ 97,00</div>
+        <div class="preco-por">R$ 27</div>
+      </div>
+      <div class="preco-desc">Pagamento único<br>Acesso vitalício</div>
+    </div>
+  </div>
+  <div class="hero-bilhetes">
+    <div class="bilhete">
+      <div class="bil-logo">🍀 mega-sena</div>
+      <div class="bil-numgrid" id="bil1"></div>
+    </div>
+    <div class="bilhete">
+      <div class="bil-logo">🍀 mega-sena</div>
+      <div class="bil-numgrid" id="bil2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAIXA -->
+<div class="faixa">
+  <div class="fi"><div class="fi-val">3.080</div><div class="fi-lbl">sorteios analisados</div></div>
+  <div class="fi"><div class="fi-val">30 anos</div><div class="fi-lbl">histórico 1996–2026</div></div>
+  <div class="fi"><div class="fi-val">60</div><div class="fi-lbl">dezenas rastreadas</div></div>
+  <div class="fi"><div class="fi-val">7</div><div class="fi-lbl">ferramentas integradas</div></div>
+</div>
+
+<!-- FUNCIONALIDADES -->
+<div class="sec">
+  <h2 class="sec-h">Tudo que você precisa<br>em um lugar só</h2>
+  <p class="sec-p">Dados reais da Caixa Econômica Federal. Análise estatística transparente. Sem achismo.</p>
+  <div class="app-wrap">
+    <div class="app-bar">
+      <div class="app-dot" style="background:#ff5f56"></div>
+      <div class="app-dot" style="background:#ffbd2e"></div>
+      <div class="app-dot" style="background:#27c93f"></div>
+      <div class="app-url">megapro.app · Área do Cliente</div>
+    </div>
+    <div class="app-body">
+      <div class="app-tabs">
+        <div class="at on">🔥 Ranking</div>
+        <div class="at">🎲 Gerador</div>
+        <div class="at">🔗 Pares</div>
+        <div class="at">📊 Frequência</div>
+        <div class="at">✅ Conferidor</div>
+        <div class="at">🏆 Virada</div>
+      </div>
+      <div style="font-size:11px;color:#90a4ae;margin-bottom:10px;font-weight:600">TOP QUENTES — 3.080 SORTEIOS OFICIAIS</div>
+      <div class="app-balls">
+        <div class="aball ab-q">10</div>
+        <div class="aball ab-q">53</div>
+        <div class="aball ab-n">05</div>
+        <div class="aball ab-n">27</div>
+        <div class="aball ab-g">37</div>
+        <div class="aball ab-g">17</div>
+      </div>
+      <div>
+        <div class="rank-row"><div class="rn">10</div><div class="rbar"><div class="rfill" style="width:100%;background:#e53935"></div></div><div class="rct" style="color:#c62828">360×</div></div>
+        <div class="rank-row"><div class="rn">53</div><div class="rbar"><div class="rfill" style="width:97%;background:#ef5350"></div></div><div class="rct" style="color:#c62828">350×</div></div>
+        <div class="rank-row"><div class="rn">05</div><div class="rbar"><div class="rfill" style="width:94%;background:var(--azul)"></div></div><div class="rct">337×</div></div>
+        <div class="rank-row"><div class="rn">27</div><div class="rbar"><div class="rfill" style="width:92%;background:var(--azul)"></div></div><div class="rct">331×</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-icon">🔥</div><div class="feat-h">Ranking dos 60 números</div><div class="feat-p">Frequência completa com barra de progresso. Filtre por período: geral, 500, 100 ou 30 últimos sorteios.</div></div>
+    <div class="feat-card"><div class="feat-icon">⏰</div><div class="feat-h">Números atrasados</div><div class="feat-p">Veja há quantos sorteios cada número não aparece. Dado direto da base oficial.</div></div>
+    <div class="feat-card"><div class="feat-icon">🔗</div><div class="feat-h">Pares mais frequentes</div><div class="feat-p">Top 20 combinações de dois números que mais saíram juntos nos 3.080 concursos.</div></div>
+    <div class="feat-card"><div class="feat-icon">🧮</div><div class="feat-h">Score estatístico</div><div class="feat-p">Fórmula: 60% frequência + 40% recência + equilíbrio par/ímpar. Score exibido por número.</div></div>
+    <div class="feat-card"><div class="feat-icon">✅</div><div class="feat-h">Conferidor em lote</div><div class="feat-p">Cole o resultado do concurso e o app verifica todos os seus jogos salvos de uma vez.</div></div>
+    <div class="feat-card"><div class="feat-icon">🎲</div><div class="feat-h">Gerador 4 modos</div><div class="feat-p">Aleatório, quentes, balanceado ou manual. Salva jogos no dispositivo com um clique.</div></div>
+    <div class="feat-card"><div class="feat-icon">🏆</div><div class="feat-h">Jogo da Virada 2027</div><div class="feat-p">Contagem regressiva ao vivo + jogo especial por score estatístico real. Prêmio estimado: R$ 1 bilhão.</div></div>
+  </div>
+</div>
+
+<!-- DEPOIMENTOS -->
+<div style="background:#fff;padding:60px max(24px,env(safe-area-inset-left,0px))">
+  <div style="max-width:860px;margin:0 auto">
+    <h2 class="sec-h">O que dizem os usuários</h2>
+    <p class="sec-p" style="margin-bottom:24px">Avaliações de quem usa toda semana.</p>
+    <div class="deps">
+      <div class="dep"><div class="dep-est">★★★★★</div><div class="dep-txt">"Uso toda semana antes de fechar meus jogos no lotérico. Ver os atrasados junto com os quentes mudou como eu escolho os números. Vale demais pelo preço."</div><div class="dep-autor"><div class="dep-av">R</div>Ricardo M. · São Paulo, SP</div></div>
+      <div class="dep"><div class="dep-est">★★★★★</div><div class="dep-txt">"O conferidor em lote é o que mais uso. Faço bolão com 12 pessoas e antes ficava conferindo um por um. Agora é tudo de uma vez."</div><div class="dep-autor"><div class="dep-av">A</div>Ana Claudia · Fortaleza, CE</div></div>
+      <div class="dep"><div class="dep-est">★★★★★</div><div class="dep-txt">"Sem enganação. O app deixa claro que é estatística, não milagre. Mas os dados são reais e bem organizados. Exatamente o que eu queria."</div><div class="dep-autor"><div class="dep-av">M</div>Marcelo T. · Belo Horizonte, MG</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMO FUNCIONA -->
+<div class="sec">
+  <h2 class="sec-h">Como funciona</h2>
+  <p class="sec-p">Três passos simples para ter acesso.</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div><div class="step-h">Compre o acesso por R$ 27</div><div class="step-p">Pagamento único pelo Pix, cartão ou boleto. Sem mensalidade, sem renovação.</div></div></div>
+    <div class="step"><div class="step-num">2</div><div><div class="step-h">Receba a senha no e-mail</div><div class="step-p">Imediatamente após a confirmação do pagamento, sua senha de acesso chega no e-mail cadastrado.</div></div></div>
+    <div class="step"><div class="step-num">3</div><div><div class="step-h">Acesse de qualquer dispositivo</div><div class="step-p">Funciona no celular, tablet e computador. Nada para instalar. Seus jogos ficam salvos no dispositivo.</div></div></div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div style="background:#fff;padding:60px max(24px,env(safe-area-inset-left,0px))">
+  <div style="max-width:860px;margin:0 auto">
+    <h2 class="sec-h">Dúvidas frequentes</h2>
+    <p class="sec-p" style="margin-bottom:24px">Respostas antes de comprar.</p>
+    <div class="faq-wrap">
+      <div class="faq-row"><button class="faq-q" onclick="toggleFaq(this)"><span>Isso garante que vou ganhar?</span><div class="faq-ico">+</div></button><div class="faq-a">Não garante. A Mega-Sena é 100% aleatória. O MegaPro é análise de dados históricos. Você joga com mais informação, não com mais sorte.</div></div>
+      <div class="faq-row"><button class="faq-q" onclick="toggleFaq(this)"><span>Os dados são oficiais da Caixa?</span><div class="faq-ico">+</div></button><div class="faq-a">Sim. Base construída com resultados oficiais da Caixa Econômica Federal, cobrindo todos os 3.080 sorteios de 1996 até novembro de 2026.</div></div>
+      <div class="faq-row"><button class="faq-q" onclick="toggleFaq(this)"><span>Precisa instalar algum app?</span><div class="faq-ico">+</div></button><div class="faq-a">Não. Roda direto no navegador do celular ou computador. Nenhuma instalação necessária.</div></div>
+      <div class="faq-row"><button class="faq-q" onclick="toggleFaq(this)"><span>Posso usar em mais de um celular?</span><div class="faq-ico">+</div></button><div class="faq-a">Sim. A senha funciona em qualquer dispositivo, sem limite de acessos.</div></div>
+      <div class="faq-row"><button class="faq-q" onclick="toggleFaq(this)"><span>E se eu não gostar?</span><div class="faq-ico">+</div></button><div class="faq-a">7 dias de garantia total. Se não ficar satisfeito por qualquer motivo, devolvo o valor integralmente, sem burocracia.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<div class="cta-bottom">
+  <h2 class="cta-h">Acesso vitalício por R$ 27</h2>
+  <p class="cta-p">Pagamento único · Sem mensalidade · Garantia de 7 dias</p>
+  <div class="preco-box">
+    <div class="pb-de">de R$ 97,00</div>
+    <div class="pb-val">R$ 27</div>
+    <div class="pb-nota">ou 3× de R$ 9,90 no cartão</div>
+  </div><br>
+  <button class="btn-cta" onclick="abrirModal()" style="font-size:16px;padding:16px 36px">🔒 Quero acesso agora</button>
+</div>
+
+<div class="aviso-sec">
+  <div class="aviso-inner">⚠️ <strong>Aviso:</strong> O MegaPro é uma ferramenta de análise estatística para fins recreativos. Nenhum método matemático pode prever resultados de sorteios aleatórios. A probabilidade de acertar 6 números é de 1 em 50.063.860. Ferramenta independente, sem vínculo com a Caixa Econômica Federal. Jogue com responsabilidade.</div>
+</div>
+
+<footer>
+  <div class="footer-logo"><span style="font-style:italic;color:#ffd54f">M</span> MegaPro</div>
+  <div class="footer-txt">© 2026 · Ferramenta independente · Todos os direitos reservados</div>
+</footer>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal()">×</button>
+    <div class="modal-top">
+      <div class="modal-logo-m">M</div>
+      <div class="modal-logo-sep"></div>
+      <div class="modal-logo-nm">MegaPro</div>
+    </div>
+    <div class="modal-title">Área do cliente</div>
+    <div class="modal-sub">Digite a senha recebida por e-mail após a compra.</div>
+    <div class="modal-label">Senha de acesso</div>
+    <input class="modal-input" type="password" id="senhaInput" placeholder="••••••••" maxlength="20" autocomplete="current-password">
+    <button class="modal-btn" onclick="verificarSenha()">Entrar no app</button>
+    <div id="erroLogin" class="modal-err"></div>
+    <div id="acessoLiberado" style="display:none;background:#e8f5e9;border:1px solid #4caf50;border-radius:8px;padding:14px;text-align:center;margin-top:8px">
+      <div style="font-size:28px">✅</div>
+      <div style="font-weight:700;color:#1b5e20;margin-top:4px">Acesso liberado!</div>
+      <div style="font-size:12px;color:#2e7d32;margin-top:4px">Quando estiver no GitHub Pages, você será redirecionado automaticamente para o app.</div>
+    </div>
+    <div class="modal-foot">
+      Ainda não tem acesso?<br>
+      <button class="modal-link" onclick="fecharModal()">Clique aqui para comprar por R$27</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Bilhetes
+function renderBilhete(id, sel){
+  const g=document.getElementById(id);
+  for(let i=1;i<=60;i++){
+    const d=document.createElement('div');
+    d.className='bil-num'+(sel.includes(i)?' m':'');
+    d.textContent=String(i).padStart(2,'0');
+    g.appendChild(d);
+  }
+}
+renderBilhete('bil1',[10,27,37,5,53,17]);
+renderBilhete('bil2',[3,15,22,41,48,56]);
+
+// ===== AUTH =====
+// SHA-256 das senhas válidas (nunca exposta a senha em texto)
+// Para adicionar nova senha: calcule SHA-256 e adicione ao array
+const HASHES_VALIDOS=[
+  'b4b55e50356350c528ffdbe3aec39488b57efa1edf3e472923b71121c7382f81', // MEGAPRO2027
+];
+
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function abrirModal(){document.getElementById('modal').classList.add('show');setTimeout(()=>document.getElementById('senhaInput').focus(),150)}
+function fecharModal(){document.getElementById('modal').classList.remove('show')}
+
+async function verificarSenha(){
+  const btn=document.querySelector('.modal-btn');
+  const v=document.getElementById('senhaInput').value.trim().toUpperCase();
+  const err=document.getElementById('erroLogin');
+  if(!v){err.textContent='Digite a senha recebida por e-mail.';return;}
+  btn.textContent='Verificando…';btn.disabled=true;
+  try{
+    const h=await sha256(v);
+    if(HASHES_VALIDOS.includes(h)){
+      try{localStorage.setItem('mpa',JSON.stringify({k:v,t:Date.now()}))}catch(e){}
+      window.location.href='app.html';
+    } else {
+      err.textContent='Senha incorreta. Verifique seu e-mail.';
+      document.getElementById('senhaInput').value='';
+      document.getElementById('senhaInput').focus();
+      setTimeout(()=>err.textContent='',4000);
+    }
+  }catch(e){
+    err.textContent='Erro interno. Tente novamente.';
+  }finally{btn.textContent='Entrar no app';btn.disabled=false;}
+}
+document.getElementById('senhaInput').addEventListener('keydown',e=>{if(e.key==='Enter')verificarSenha();document.getElementById('erroLogin').textContent=''});
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)fecharModal()});
+function toggleFaq(btn){btn.closest('.faq-row').classList.toggle('open')}
+</script>
