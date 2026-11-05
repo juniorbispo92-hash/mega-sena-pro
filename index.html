@@ -353,15 +353,26 @@ renderBilhete('bil1',[10,27,37,5,53,17]);
 renderBilhete('bil2',[3,15,22,41,48,56]);
 
 // ===== AUTH =====
-// SHA-256 das senhas válidas (nunca exposta a senha em texto)
-// Para adicionar nova senha: calcule SHA-256 e adicione ao array
-const HASHES_VALIDOS=[
-  'b4b55e50356350c528ffdbe3aec39488b57efa1edf3e472923b71121c7382f81', // MEGAPRO2027
-];
+const SUPABASE_URL='https://ntrhhrwfqhpchlanjlrt.supabase.co';
+const SUPABASE_KEY='sb_publishable_1t9A6L5RVzaFv4PK1dawgw_9BvuzX3V';
 
-async function sha256(str){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+async function verificarSenhaSupabase(senha){
+  try{
+    const res=await fetch(
+      `${SUPABASE_URL}/rest/v1/licenses?senha=eq.${encodeURIComponent(senha)}&active=eq.true&select=email,nome`,
+      {headers:{
+        'apikey':SUPABASE_KEY,
+        'Authorization':'Bearer '+SUPABASE_KEY,
+        'Content-Type':'application/json'
+      }}
+    );
+    if(!res.ok) return null;
+    const data=await res.json();
+    return data.length>0 ? data[0] : null;
+  }catch(e){
+    console.error('Erro ao verificar senha:',e);
+    return null;
+  }
 }
 
 function abrirModal(){document.getElementById('modal').classList.add('show');setTimeout(()=>document.getElementById('senhaInput').focus(),150)}
@@ -374,8 +385,8 @@ async function verificarSenha(){
   if(!v){err.textContent='Digite a senha recebida por e-mail.';return;}
   btn.textContent='Verificando…';btn.disabled=true;
   try{
-    const h=await sha256(v);
-    if(HASHES_VALIDOS.includes(h)){
+    const licenca=await verificarSenhaSupabase(v);
+    if(licenca){
       try{localStorage.setItem('mpa',JSON.stringify({k:v,t:Date.now()}))}catch(e){}
       window.location.href='app.html';
     } else {
@@ -385,7 +396,7 @@ async function verificarSenha(){
       setTimeout(()=>err.textContent='',4000);
     }
   }catch(e){
-    err.textContent='Erro interno. Tente novamente.';
+    err.textContent='Erro de conexão. Verifique sua internet.';
   }finally{btn.textContent='Entrar no app';btn.disabled=false;}
 }
 document.getElementById('senhaInput').addEventListener('keydown',e=>{if(e.key==='Enter')verificarSenha();document.getElementById('erroLogin').textContent=''});
